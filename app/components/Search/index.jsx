@@ -1,32 +1,38 @@
 import "@/styles/global.css";
-import React, { useState, useDeferredValue, useEffect } from "react";
-import HeavySearchResult from "../HeavySearchResult";
+import React, { useState, useEffect } from "react";
+import mockFetch from "../../../lib/mockFetch";
+import useDebounce from "../../hooks/useDebounce";
 
 const Index = () => {
-  const [input, setInput] = useState("");
-  const defferedInput = useDeferredValue(input);
-  function handleChange(event) {
-    setInput(event.target.value);
-  }
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 500);
+  const [results, setResults] = useState([]);
 
   useEffect(() => {
-    console.log("--- start useEffect()");
-    console.log("input: " + input);
-    console.log("defferedInput: " + defferedInput);
-    console.log("-----------------------------------------> end");
-  }, [input]);
+    const fetchResults = async () => {
+      if (debouncedQuery) {
+        mockFetch(debouncedQuery).then(setResults);
+      } else {
+        setResults([]); // clear results if query is empty
+      }
+    };
+    fetchResults();
+  }, [debouncedQuery]);
 
   return (
     <div>
       <input
-        className=" border-2 border-gray-400 bg-slate-300"
-        placeholder="Type to search..."
         type="text"
-        value={input}
-        onChange={handleChange}
+        className=" border-2 text-white border-gray-500 bg-slate-400"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search with debounce..."
       />
-      <p>{input && !defferedInput ? "Updating UI in real-time..." : null}</p>
-      <HeavySearchResult input={defferedInput} />
+      <ul>
+        {results.map((item, index) => (
+          <li key={index}>{item.title}</li>
+        ))}
+      </ul>
     </div>
   );
 };

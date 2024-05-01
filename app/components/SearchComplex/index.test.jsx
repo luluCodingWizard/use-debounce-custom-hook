@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { act } from "react";
-import Search from "./index";
+import SearchComplex from "./index";
 import mockFetch from "../../../lib/mockFetch";
 
 // Mock the debounce hook
@@ -16,7 +16,7 @@ jest.mock("../../../lib/mockFetch.js", () => {
   );
 });
 
-describe("Search component:", () => {
+describe("SearchComplex component:", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockFetch.mockClear();
@@ -28,7 +28,7 @@ describe("Search component:", () => {
   });
 
   test("debounce the input and fetch data", async () => {
-    render(<Search />);
+    render(<SearchComplex />);
     // simulate someone typing in teh field
     fireEvent.change(screen.getByPlaceholderText("Search with debounce..."), {
       target: { value: "a" },
